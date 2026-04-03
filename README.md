@@ -18,9 +18,15 @@ By design, training runs for a **fixed 5-minute time budget** (wall clock, exclu
 
 If you are new to neural networks, this ["Dummy's Guide"](https://x.com/hooeem/status/2030720614752039185) looks pretty good for a lot more context.
 
+## Hardware
+
+NVIDIA Jetson Orin Nano Super Developer Kit — 8 GB unified memory (CPU + GPU shared), 1024 CUDA cores, JetPack 6.1 / CUDA 12.6, ARM64 (aarch64).
+
+`torch.compile` is unavailable — Triton is not supported on ARM64. Flash Attention 3 is replaced with `F.scaled_dot_product_attention`. ~1.4 GB model footprint, ~1350 steps per 5-minute experiment.
+
 ## Quick start
 
-**Requirements:** A single NVIDIA GPU (tested on H100), Python 3.10+, [uv](https://docs.astral.sh/uv/).
+**Requirements:** Python 3.10+, [uv](https://docs.astral.sh/uv/).
 
 ```bash
 
@@ -28,13 +34,13 @@ If you are new to neural networks, this ["Dummy's Guide"](https://x.com/hooeem/s
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # 2. Install dependencies
-uv sync
+UV_SKIP_WHEEL_FILENAME_CHECK=1 uv sync
 
 # 3. Download data and train tokenizer (one-time, ~2 min)
-uv run prepare.py
+UV_SKIP_WHEEL_FILENAME_CHECK=1 uv run prepare.py
 
 # 4. Manually run a single training experiment (~5 min)
-uv run train.py
+UV_SKIP_WHEEL_FILENAME_CHECK=1 uv run train.py
 ```
 
 If the above commands all work ok, your setup is working and you can go into autonomous research mode.

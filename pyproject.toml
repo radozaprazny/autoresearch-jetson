@@ -1,5 +1,5 @@
 [project]
-name = "autoresearch"
+name = "autoresearch-jetson"
 version = "0.1.0"
 description = "Autonomous pretraining research swarm"
 readme = "README.md"
@@ -17,11 +17,8 @@ dependencies = [
 ]
 
 [tool.uv.sources]
+# Jetson Orin Nano Super (aarch64, JetPack 6.1, CUDA 12.6)
+# Install: UV_SKIP_WHEEL_FILENAME_CHECK=1 uv sync
 torch = [
-    { index = "pytorch-cu128" },
+  { url = "https://developer.download.nvidia.com/compute/redist/jp/v61/pytorch/torch-2.5.0a0+872d972e41.nv24.08.17622132-cp310-cp310-linux_aarch64.whl" },
 ]
-
-[[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
-explicit = true
