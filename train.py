@@ -91,6 +91,11 @@ class CausalSelfAttention(nn.Module):
         q = q.transpose(1, 2)
         k = k.transpose(1, 2)
         v = v.transpose(1, 2)
+        # GQA: expand KV heads to match Q heads (FA3 does this automatically, SDPA does not)
+        if self.n_kv_head < self.n_head:
+            groups = self.n_head // self.n_kv_head
+            k = k.repeat_interleave(groups, dim=1)
+            v = v.repeat_interleave(groups, dim=1)
         y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
         y = y.transpose(1, 2).contiguous().view(B, T, -1)
         y = self.c_proj(y)
@@ -359,17 +364,18 @@ class MuonAdamW(torch.optim.Optimizer):
 
     def __init__(self, param_groups):
         super().__init__(param_groups, defaults={})
-        # 0-D CPU tensors to avoid torch.compile recompilation when values change
-        self._adamw_step_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._adamw_lr_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._adamw_beta1_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._adamw_beta2_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._adamw_eps_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._adamw_wd_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._muon_momentum_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._muon_lr_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._muon_wd_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
-        self._muon_beta2_t = torch.tensor(0.0, dtype=torch.float32, device="cpu")
+        # 0-D tensors on CUDA (upstream uses CPU to avoid torch.compile recompilation,
+        # but without torch.compile this causes device mismatch on Jetson)
+        self._adamw_step_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._adamw_lr_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._adamw_beta1_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._adamw_beta2_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._adamw_eps_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._adamw_wd_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._muon_momentum_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._muon_lr_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._muon_wd_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
+        self._muon_beta2_t = torch.tensor(0.0, dtype=torch.float32, device="cuda")
 
     def _step_adamw(self, group):
         for p in group['params']:
