@@ -22,6 +22,31 @@ Once you get confirmation, kick off the experimentation.
 
 Each experiment runs on a single GPU. The training script runs for a **fixed time budget of 5 minutes** (wall clock training time, excluding startup/compilation). You launch it simply as: `uv run train.py`.
 
+### Workflow (MANDATORY)
+
+Each experiment follows this strict order:
+1. Edit `train.py`
+2. `git commit -m "exp: <description>"`  ← FIRST
+3. `python train.py`                      ← THEN
+4. Record result in `results.tsv`
+5. Repeat
+
+The git dirty check enforces this order automatically. If you see "❌ ERROR: Uncommitted changes", you forgot step 2.
+
+### Anti-Stagnation Rule
+
+If your last **5 consecutive experiments** resulted in `discard` with improvement delta < 0.002 from current champion:
+
+**FORBIDDEN:**
+- Tuning hyperparameters (LR, weight decay, betas, momentum)
+- Micro-adjustments to existing values
+
+**REQUIRED:**
+- Structural changes: activation functions, attention mechanisms, normalization layers, architecture modifications
+- Novel approaches not yet tested
+
+This prevents getting stuck in micro-optimization noise floor.
+
 **What you CAN do:**
 - Modify `train.py` — this is the only file you edit. Everything is fair game: model architecture, optimizer, hyperparameters, training loop, batch size, model size, etc.
 
@@ -42,7 +67,7 @@ Each experiment runs on a single GPU. The training script runs for a **fixed tim
 
 ## Output format
 
-Once the script finishes it prints a summary like this:
+Once the script finishes it prints a **minimal summary** (Rule of Silence — log only what matters):
 
 ```
 ---
@@ -55,6 +80,8 @@ total_tokens_M:   499.6
 num_steps:        953
 num_params_M:     50.3
 depth:            8
+torch_seed:       42
+script_hash:      a1b2c3d4
 ```
 
 Note that the script is configured to always stop after 5 minutes, so depending on the computing platform of this computer the numbers might look different. You can extract the key metric from the log file:

@@ -9,7 +9,10 @@ os.environ["PYTORCH_ALLOC_CONF"] = "expandable_segments:True"
 os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 
 import gc
+import hashlib
 import math
+import subprocess
+import sys
 import time
 from dataclasses import dataclass, asdict
 
@@ -455,6 +458,9 @@ WARMUP_RATIO = 0.0      # fraction of time budget for LR warmup
 WARMDOWN_RATIO = 0.5    # fraction of time budget for LR warmdown
 FINAL_LR_FRAC = 0.0     # final LR as fraction of initial
 
+# Schedule sanity check
+assert WARMUP_RATIO + WARMDOWN_RATIO <= 1.0, "Schedule collapse!"
+
 # Model size
 DEPTH = 3               # number of transformer layers — reduced for Jetson 8 GB
 DEVICE_BATCH_SIZE = 16  # per-device batch size (reduce if OOM)
@@ -463,9 +469,20 @@ DEVICE_BATCH_SIZE = 16  # per-device batch size (reduce if OOM)
 # Setup: tokenizer, model, optimizer, dataloader
 # ---------------------------------------------------------------------------
 
+# Git integrity check - enforce commit-before-run workflow
+result = subprocess.run(
+    ['git', 'diff-index', '--quiet', 'HEAD'],
+    capture_output=True
+)
+if result.returncode != 0:
+    print("❌ ERROR: Uncommitted changes detected")
+    print("   WORKFLOW: git commit → python train.py")
+    sys.exit(1)
+
 t_start = time.time()
-torch.manual_seed(42)
-torch.cuda.manual_seed(42)
+TORCH_SEED = 42
+torch.manual_seed(TORCH_SEED)
+torch.cuda.manual_seed(TORCH_SEED)
 torch.set_float32_matmul_precision("high")
 device = torch.device("cuda")
 autocast_ctx = torch.amp.autocast(device_type="cuda", dtype=torch.bfloat16)
@@ -498,6 +515,12 @@ print("Parameter counts:")
 for key, value in param_counts.items():
     print(f"  {key:24s}: {value:,}")
 num_params = param_counts['total']
+
+# VRAM estimate - soft warning for Jetson 8GB
+_vram_est_gb = num_params * 2 / 1e9 * 3.5
+if _vram_est_gb > 6.8:
+    print(f"⚠️  WARNING: VRAM Est ~{_vram_est_gb:.1f}GB -> Potential OOM")
+
 num_flops_per_token = model.estimate_flops()
 print(f"Estimated FLOPs per token: {num_flops_per_token:e}")
 
@@ -638,3 +661,7 @@ print(f"total_tokens_M:   {total_tokens / 1e6:.1f}")
 print(f"num_steps:        {step}")
 print(f"num_params_M:     {num_params / 1e6:.1f}")
 print(f"depth:            {DEPTH}")
+print(f"torch_seed:       {TORCH_SEED}")
+with open(__file__, 'rb') as f:
+    _script_hash = hashlib.sha256(f.read()).hexdigest()[:8]
+print(f"script_hash:      {_script_hash}")
