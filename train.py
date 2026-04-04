@@ -462,7 +462,7 @@ FINAL_LR_FRAC = 0.0     # final LR as fraction of initial
 assert WARMUP_RATIO + WARMDOWN_RATIO <= 1.0, "Schedule collapse!"
 
 # Model size
-DEPTH = 3               # number of transformer layers — reduced for Jetson 8 GB
+DEPTH = 4               # number of transformer layers — reduced for Jetson 8 GB
 DEVICE_BATCH_SIZE = 16  # per-device batch size (reduce if OOM)
 
 # ---------------------------------------------------------------------------
