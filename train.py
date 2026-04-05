@@ -441,7 +441,7 @@ WEIGHT_DECAY = 0.10     # cautious weight decay for Muon
 ADAM_BETAS = (0.8, 0.98) # Adam beta1, beta2
 WARMUP_RATIO = 0.0      # fraction of time budget for LR warmup
 WARMDOWN_RATIO = 0.5    # fraction of time budget for LR warmdown
-FINAL_LR_FRAC = 0.1     # final LR as fraction of initial
+FINAL_LR_FRAC = 0.05    # final LR as fraction of initial
 
 # Schedule sanity check
 assert WARMUP_RATIO + WARMDOWN_RATIO <= 1.0, "Schedule collapse!"
