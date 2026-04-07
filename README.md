@@ -1,6 +1,6 @@
 # autoresearch — Jetson Orin Nano Super (ARM64) + Workflow Improvements
 
-![teaser](progress.png)
+![teaser](progress.png?raw=true)
 
 Fork of [karpathy/autoresearch](https://github.com/karpathy/autoresearch). Full credit to [@karpathy](https://github.com/karpathy) for the core idea: give an AI agent a small but real LLM training setup and let it experiment autonomously. It modifies `train.py`, trains for 5 minutes, checks if the result improved, keeps or discards, and repeats. The metric is val_bpb (validation bits per byte) — lower is better.
 
