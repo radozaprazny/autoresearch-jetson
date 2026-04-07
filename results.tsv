@@ -1,0 +1,103 @@
+commit	val_bpb	memory_gb	status	description
+0d8032c	1.454936	1.6	keep	baseline
+7c4c4f0	1.477954	2.6	discard	increase depth from 3 to 6 layers
+830c306	1.455928	1.9	discard	increase ASPECT_RATIO from 64 to 96
+af676f9	1.461096	1.6	discard	increase MATRIX_LR from 0.04 to 0.06
+bdbcea6	1.451162	1.6	keep	decrease MATRIX_LR from 0.04 to 0.03
+2d833b4	1.448349	1.6	keep	decrease MATRIX_LR from 0.03 to 0.025
+1d1a71a	1.460374	1.6	discard	decrease MATRIX_LR from 0.025 to 0.02
+9f6d8bd	1.456783	1.6	discard	decrease EMBEDDING_LR from 0.6 to 0.5
+3c9324b	1.434752	1.6	keep	increase TOTAL_BATCH_SIZE from 2^13 to 2^14
+8a64d64	1.441324	1.6	discard	increase TOTAL_BATCH_SIZE from 2^14 to 2^15
+2aeb09a	1.434360	1.5	keep	switch activation from ReLU^2 to GeLU
+40f765a	1.431386	1.7	keep	increase DEPTH from 3 to 4
+e437547	1.470850	2.2	discard	increase DEPTH from 4 to 5
+9dc60ab	1.430702	1.7	keep	reduce WEIGHT_DECAY from 0.2 to 0.1
+61fcee8	1.432714	1.7	discard	reduce WEIGHT_DECAY from 0.1 to 0.05
+44f8d4e	1.431276	1.7	discard	change WINDOW_PATTERN from SSSL to L (all full context)
+6346ea1	1.446346	2.0	discard	increase ASPECT_RATIO from 64 to 80
+8fb8104	1.431882	1.7	discard	increase EMBEDDING_LR from 0.6 to 0.7
+03726be	1.434113	1.7	discard	reduce WARMDOWN_RATIO from 0.5 to 0.3
+b201ef8	1.434582	1.7	discard	increase UNEMBEDDING_LR from 0.004 to 0.005
+b7aef48	1.432000	1.7	discard	reduce SCALAR_LR from 0.5 to 0.3
+d3376c5	1.432554	1.7	discard	increase ADAM_BETAS beta1 from 0.8 to 0.85
+2557550	1.431844	1.7	discard	increase WARMDOWN_RATIO from 0.5 to 0.6
+3e7514f	1.503259	1.8	discard	switch from GeLU to SwiGLU activation
+491a4c0	1.446757	0.9	discard	reduce DEVICE_BATCH_SIZE from 16 to 8
+4db24f5	1.431465	1.7	discard	reduce UNEMBEDDING_LR from 0.004 to 0.003
+3cd5ed7	1.444217	1.7	discard	add WARMUP_RATIO from 0.0 to 0.1
+378c476	1.430148	1.7	keep	increase MATRIX_LR from 0.025 to 0.028
+b3363f9	1.430655	1.7	discard	reduce WEIGHT_DECAY from 0.1 to 0.08
+a327375	1.429472	1.7	keep	increase WEIGHT_DECAY from 0.1 to 0.12
+95ec797	1.433420	1.7	discard	increase WEIGHT_DECAY from 0.12 to 0.14
+762f4f1	1.435612	1.7	discard	reduce HEAD_DIM from 128 to 96
+ff762e7	1.433460	1.7	discard	increase HEAD_DIM from 128 to 144
+423e1a5	1.430540	1.6	discard	reduce ASPECT_RATIO from 64 to 56
+dfd1733	1.430994	1.6	discard	increase MATRIX_LR from 0.028 to 0.029
+9339bf1	1.430462	1.6	discard	reduce MATRIX_LR from 0.028 to 0.027
+3cf8345	1.430073	1.6	discard	reduce EMBEDDING_LR from 0.6 to 0.55
+1a3f97b	1.430604	1.6	discard	reduce WARMDOWN_RATIO from 0.5 to 0.4
+399978d	1.416535	1.4	keep	remove logit softcapping
+077ecb0	1.409912	1.4	keep	remove x0_lambdas (initial embedding skip connection)
+ed6a1a6	1.407424	1.3	keep	remove resid_lambdas (per-layer residual scaling)
+ec3c0bf	1.425837	1.3	discard	remove value embeddings (ResFormer)
+68b5c9f	1.407656	1.3	discard	change WINDOW_PATTERN from SSSL to L (all full attention)
+6254129	1.409748	1.3	discard	reduce MLP expansion from 4x to 3x
+72697d9	1.409046	1.4	discard	increase MLP expansion from 4x to 5x
+61fa32c	1.410375	1.3	discard	enable GQA with n_kv_head = n_head // 2
+099d579	1.407576	1.3	discard	increase WEIGHT_DECAY from 0.12 to 0.13
+3c1d5e0	1.407150	1.3	keep	reduce WEIGHT_DECAY from 0.12 to 0.11
+cd9150a	1.407056	1.3	keep	reduce WEIGHT_DECAY from 0.11 to 0.10
+d8aac9c	1.407138	1.3	discard	reduce WEIGHT_DECAY from 0.10 to 0.09
+1f6740b	1.431721	1.9	discard	increase DEPTH from 4 to 5
+189703c	1.422305	1.3	discard	increase TOTAL_BATCH_SIZE from 2^14 to 2^15
+901674c	1.407690	1.3	discard	increase EMBEDDING_LR from 0.6 to 0.65
+d436dce	1.418001	1.6	discard	increase ASPECT_RATIO from 64 to 72
+8db8554	1.407964	1.3	discard	increase UNEMBEDDING_LR from 0.004 to 0.0045
+691ec2c	1.408583	1.3	discard	reduce UNEMBEDDING_LR from 0.004 to 0.0035
+b944e13	1.408503	1.3	discard	reduce WARMDOWN_RATIO from 0.5 to 0.45
+62b1313	1.407560	1.3	discard	reduce ADAM_BETAS beta1 from 0.8 to 0.75
+ccc3483	1.417966	1.5	discard	switch from GeLU to ReLU² activation
+f1cb727	1.408490	1.3	discard	increase MATRIX_LR from 0.028 to 0.03
+47fe094	1.407292	1.3	discard	change WINDOW_PATTERN from SSSL to SLSL
+1dff09e	1.414793	1.3	discard	reduce MLP expansion from 4.0 to 3.5
+75b09f7	1.411678	1.3	discard	reduce ADAM_BETAS beta2 from 0.95 to 0.90
+e6b7f95	1.405921	1.3	keep	increase ADAM_BETAS beta2 from 0.95 to 0.98
+1a04c29	1.406083	1.3	discard	increase ADAM_BETAS beta2 from 0.98 to 0.99
+f0e3155	1.406288	1.3	discard	reduce ADAM_BETAS beta2 from 0.98 to 0.97
+62ce630	1.405614	1.3	keep	increase FINAL_LR_FRAC from 0.0 to 0.1
+a06a4d4	1.409182	1.3	discard	increase FINAL_LR_FRAC from 0.1 to 0.2
+cde3f02	1.405240	1.3	keep	reduce FINAL_LR_FRAC from 0.1 to 0.05
+d8d08c5	1.405850	1.3	discard	reduce FINAL_LR_FRAC from 0.05 to 0.03
+b7e2d98	1.405652	1.3	discard	reduce WEIGHT_DECAY from 0.10 to 0.095
+0f00873	1.405216	1.3	keep	increase MATRIX_LR from 0.028 to 0.0285
+7e6dd88	1.405345	1.3	discard	increase MATRIX_LR from 0.0285 to 0.029
+9c096e3	1.405024	1.3	keep	reduce EMBEDDING_LR from 0.6 to 0.58
+f9edb14	1.405178	1.3	discard	reduce EMBEDDING_LR from 0.58 to 0.56
+e73d472	1.405914	1.3	discard	reduce WARMDOWN_RATIO from 0.5 to 0.48
+fa5141b	1.405816	1.3	discard	reduce SCALAR_LR from 0.5 to 0.45
+2e6bd5b	1.404085	1.3	keep	reduce UNEMBEDDING_LR from 0.004 to 0.0038
+14fddd8	1.405202	1.3	discard	reduce UNEMBEDDING_LR from 0.0038 to 0.0036
+e3bbbaa	1.409378	1.3	discard	increase WARMUP_RATIO from 0.0 to 0.05
+deb6d05	1.405227	1.3	discard	increase ADAM_BETAS beta1 from 0.8 to 0.82
+aed6fd5	1.404774	1.3	discard	increase FINAL_LR_FRAC from 0.05 to 0.06
+7acb48c	1.404865	1.3	discard	increase WEIGHT_DECAY from 0.10 to 0.105
+476a18c	1.404596	1.3	discard	increase EMBEDDING_LR from 0.58 to 0.59
+7f2142e	1.404508	1.3	discard	reduce EMBEDDING_LR from 0.58 to 0.57
+5393194	1.404445	1.3	discard	increase MATRIX_LR from 0.0285 to 0.02875
+1329ade	1.404742	1.3	discard	change WINDOW_PATTERN from SSSL to SSLS
+b75d3da	1.404985	1.3	discard	reduce MATRIX_LR from 0.0285 to 0.0283
+3a254d9	1.405235	1.3	discard	increase EMBEDDING_LR from 0.58 to 0.585
+fa65d76	1.404470	1.3	discard	reduce ADAM_BETAS beta1 from 0.8 to 0.79
+bf3c475	1.405104	1.3	discard	reduce UNEMBEDDING_LR from 0.0038 to 0.00375
+6a97735	1.405949	1.3	discard	increase UNEMBEDDING_LR from 0.0038 to 0.0039
+8c813fe	1.404741	1.3	discard	increase WARMDOWN_RATIO from 0.5 to 0.51
+230a233	1.405104	1.3	discard	increase SCALAR_LR from 0.5 to 0.52
+115d620	1.404391	1.3	discard	reduce WEIGHT_DECAY from 0.10 to 0.098
+c2c7367	1.404897	1.3	discard	reduce WEIGHT_DECAY from 0.10 to 0.099
+f98ac61	1.405428	1.3	discard	reduce FINAL_LR_FRAC from 0.05 to 0.045
+f92b70b	1.405016	1.3	discard	reduce WEIGHT_DECAY to 0.098 and EMBEDDING_LR to 0.579
+085adc2	1.405329	1.3	discard	reduce ASPECT_RATIO from 64 to 62
+18bfd5d	1.404260	1.3	discard	reduce ADAM_BETAS beta2 from 0.98 to 0.975
+ab38c0d	1.405231	1.3	discard	increase ADAM_BETAS beta2 from 0.98 to 0.982
+0972ed4	1.408037	1.3	discard	increase WARMUP_RATIO from 0.0 to 0.01
