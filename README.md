@@ -10,7 +10,7 @@ This fork ports autoresearch to **NVIDIA Jetson Orin Nano Super** (ARM64, 8GB un
 
 NVIDIA Jetson Orin Nano Super Developer Kit — 8 GB unified memory (CPU + GPU shared), 1024 CUDA cores, JetPack 6.1 / CUDA 12.6, ARM64 (aarch64). SDPA (no Flash Attention 3). `torch.compile` unavailable — Triton is not supported on ARM64. ~1.4 GB model footprint, ~1350 steps per 5-minute experiment.
 
-## Results
+## Results6
 
 > ⚠️ **Note:** This fork has two branches with different purposes (see [Branches](#branches) section below). Complete results are on `autoresearch/apr4` branch.
 
