@@ -60,8 +60,8 @@ This fork maintains **two branches** to show incremental value:
 
 **Purpose:** Everything from `master` + automated workflow improvements  
 **Additional changes:**
-- 6 integrity checks (git dirty check, VRAM monitoring, etc.)
-- Anti-stagnation rule in `program.md`
+- 4 workflow guards (git dirty check, VRAM pre-flight, script hash, anti-stagnation)
+- Enforces commit-before-run workflow
 
 **Status:** 20 keep experiments, 102 total runs  
 **Files:**
