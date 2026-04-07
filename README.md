@@ -64,7 +64,7 @@ if _vram_est_gb > 6.8:
 ### 3. **Script Hash Tracking** (`train.py:651-652`)
 **Problem:** Accidentally editing `train.py` after commit invalidates results.  
 **Solution:** Log SHA-256 hash of script at experiment end.  
-**Impact:** Easy detection of post-commit modifications in experiment logs.
+**Impact:** Provides audit trail in experiment logs. Post-commit edits are already blocked by git dirty check — hash adds secondary verification layer.
 
 ```python
 with open(__file__, 'rb') as f:
@@ -74,11 +74,11 @@ print(f"script_hash:      {_script_hash}")
 
 ### 4. **Anti-Stagnation Rule** (`program.md:36-49`)
 **Problem:** Agent gets stuck micro-tuning hyperparameters in noise floor.  
-**Solution:** After 5 consecutive discards with <0.002 improvement, force structural changes.  
-**Impact:** Prevents hyperparameter dead-ends, encourages architectural exploration.
+**Solution:** After 5 consecutive discards with <0.002 improvement, encourage structural changes.  
+**Impact:** Agent guideline (not code-enforced) encouraging structural exploration. Most impactful changes came during early structural phase (experiments 1-65).
 
-**Forbidden:** LR tweaks, weight decay adjustments  
-**Required:** Activation functions, attention mechanisms, architecture changes
+**Discouraged:** LR tweaks, weight decay adjustments  
+**Encouraged:** Activation functions, attention mechanisms, architecture changes
 
 ## Platform Adaptations
 
