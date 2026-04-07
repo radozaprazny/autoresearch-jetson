@@ -31,7 +31,7 @@ NVIDIA Jetson Orin Nano Super Developer Kit — 8 GB unified memory (CPU + GPU s
 
 ## Workflow Improvements (apr4 branch)
 
-This fork adds automated integrity checks to prevent common experiment failures and ensure reproducibility:
+This fork adds automated workflow guards to prevent common experiment failures and ensure reproducibility:
 
 ### 1. **Git Dirty Check** (`train.py:458-465`)
 **Problem:** Running experiments with uncommitted changes makes results non-reproducible.  
@@ -40,53 +40,39 @@ This fork adds automated integrity checks to prevent common experiment failures 
 
 ```python
 # Before training starts
-if subprocess.run(["git", "diff", "--quiet"]).returncode != 0:
+result = subprocess.run(['git', 'diff-index', '--quiet', 'HEAD'], capture_output=True)
+if result.returncode != 0:
     print("❌ ERROR: Uncommitted changes detected")
+    print("   WORKFLOW: git commit → python train.py")
     sys.exit(1)
 ```
 
 **Enforces workflow:** `git commit` → `train.py` → record result
 
-### 2. **Schedule Validation** (`train.py:447`)
-**Problem:** Configuration errors can violate 5-minute time budget, invalidating experiment.  
-**Solution:** Assert that schedule matches expected duration before training.  
-**Impact:** Zero crashes from schedule violations across 102 experiments.
+### 2. **VRAM Pre-flight Check** (`train.py:504-507`)
+**Problem:** Silent OOM crashes waste hours on 8GB unified memory.  
+**Solution:** Estimate VRAM usage before training starts, warn if approaching limits.  
+**Impact:** Zero OOM failures across 102 experiments.
 
 ```python
-assert schedule(0) == WARMUP_RATIO and schedule(1) == WARMDOWN_RATIO
+# VRAM estimate - soft warning for Jetson 8GB
+_vram_est_gb = num_params * 2 / 1e9 * 3.5
+if _vram_est_gb > 6.8:
+    print(f"⚠️  WARNING: VRAM Est ~{_vram_est_gb:.1f}GB -> Potential OOM")
 ```
 
-### 3. **VRAM Monitoring** (`train.py:504-506`)
-**Problem:** Silent memory pressure can degrade performance or cause OOM crashes.  
-**Solution:** Warn when approaching memory limits (>90% usage).  
-**Impact:** All 102 experiments stayed within 8GB bounds, no OOM failures.
+### 3. **Script Hash Tracking** (`train.py:651-652`)
+**Problem:** Accidentally editing `train.py` after commit invalidates results.  
+**Solution:** Log SHA-256 hash of script at experiment end.  
+**Impact:** Easy detection of post-commit modifications in experiment logs.
 
 ```python
-if torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated() > 0.9:
-    print(f"⚠️  VRAM WARNING: {mem_gb:.1f} GB / 8 GB")
+with open(__file__, 'rb') as f:
+    _script_hash = hashlib.sha256(f.read()).hexdigest()[:8]
+print(f"script_hash:      {_script_hash}")
 ```
 
-### 4. **Script Hash Tracking** (`train.py:650-652`)
-**Problem:** Accidentally editing `train.py` during experiment invalidates results.  
-**Solution:** Log SHA-256 hash of script at experiment start.  
-**Impact:** Easy detection of mid-run modifications.
-
-```python
-script_hash = hashlib.sha256(open(__file__, "rb").read()).hexdigest()
-print(f"Script hash: {script_hash[:8]}")
-```
-
-### 5. **Dynamic TORCH_SEED** (`train.py:469`)
-**Problem:** Hardcoded seed causes accidental duplication across experiments.  
-**Solution:** Auto-increment seed from git commit hash.  
-**Impact:** Each experiment has unique seed, transparent in logs.
-
-```python
-commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
-TORCH_SEED = int(commit_hash[:8], 16) % 2**31
-```
-
-### 6. **Anti-Stagnation Rule** (`program.md`)
+### 4. **Anti-Stagnation Rule** (`program.md:36-49`)
 **Problem:** Agent gets stuck micro-tuning hyperparameters in noise floor.  
 **Solution:** After 5 consecutive discards with <0.002 improvement, force structural changes.  
 **Impact:** Prevents hyperparameter dead-ends, encourages architectural exploration.
