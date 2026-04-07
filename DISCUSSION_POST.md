@@ -54,7 +54,7 @@ After 5 consecutive discards with <0.002 improvement (program.md):
 ## 📊 Results: Jetson Orin Nano Super (ARM64)
 
 **Hardware:** 8GB unified memory, 1024 CUDA cores, ARM64, JetPack 6.1  
-**Model:** 1.4 GB (27× smaller than H100's 44GB model)  
+**Model:** 1.6 GB (27× smaller than H100's 44GB model)  
 **Steps:** ~1350 per 5-min experiment (vs ~8000 on H100)
 
 - ✅ Total experiments: 102

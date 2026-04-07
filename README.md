@@ -10,7 +10,7 @@ This fork:
 
 ## Hardware
 
-NVIDIA Jetson Orin Nano Super Developer Kit — 8 GB unified memory (CPU + GPU shared), 1024 CUDA cores, JetPack 6.1 / CUDA 12.6, ARM64 (aarch64). SDPA (no Flash Attention 3). `torch.compile` unavailable — Triton is not supported on ARM64. ~1.4 GB model footprint, ~1350 steps per 5-minute experiment.
+NVIDIA Jetson Orin Nano Super Developer Kit — 8 GB unified memory (CPU + GPU shared), 1024 CUDA cores, JetPack 6.1 / CUDA 12.6, ARM64 (aarch64). SDPA (no Flash Attention 3). `torch.compile` unavailable — Triton is not supported on ARM64. ~1.6 GB model footprint, ~1350 steps per 5-minute experiment.
 
 ## Results
 
