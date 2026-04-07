@@ -1,12 +1,10 @@
-# autoresearch — Jetson Orin Nano Super (ARM64) + Workflow Improvements
+# autoresearch — Jetson Orin Nano Super (ARM64)
 
 ![teaser](progress.png?raw=true)
 
 Fork of [karpathy/autoresearch](https://github.com/karpathy/autoresearch). Full credit to [@karpathy](https://github.com/karpathy) for the core idea: give an AI agent a small but real LLM training setup and let it experiment autonomously. It modifies `train.py`, trains for 5 minutes, checks if the result improved, keeps or discards, and repeats. The metric is val_bpb (validation bits per byte) — lower is better.
 
-This fork:
-1. Ports autoresearch to **NVIDIA Jetson Orin Nano Super** (ARM64, 8GB unified memory)
-2. Adds **automated workflow integrity checks** to ensure reproducible experiments
+This fork ports autoresearch to **NVIDIA Jetson Orin Nano Super** (ARM64, 8GB unified memory). The `autoresearch/apr4` branch adds automated workflow guards for reproducibility.
 
 ## Hardware
 
@@ -28,71 +26,6 @@ NVIDIA Jetson Orin Nano Super Developer Kit — 8 GB unified memory (CPU + GPU s
 **Comparison:**
 - `master` branch: 13 keeps (baseline port only)
 - `autoresearch/apr4` branch: 20 keeps (with integrity checks)
-
-## Workflow Improvements (apr4 branch)
-
-This fork adds automated integrity checks to prevent common experiment failures and ensure reproducibility:
-
-### 1. **Git Dirty Check** (`train.py:458-465`)
-**Problem:** Running experiments with uncommitted changes makes results non-reproducible.  
-**Solution:** Script refuses to run unless working directory is clean.  
-**Impact:** 100% compliance — all 102 experiments have matching git commits.
-
-```python
-# Before training starts
-if subprocess.run(["git", "diff", "--quiet"]).returncode != 0:
-    print("❌ ERROR: Uncommitted changes detected")
-    sys.exit(1)
-```
-
-**Enforces workflow:** `git commit` → `train.py` → record result
-
-### 2. **Schedule Validation** (`train.py:447`)
-**Problem:** Configuration errors can violate 5-minute time budget, invalidating experiment.  
-**Solution:** Assert that schedule matches expected duration before training.  
-**Impact:** Zero crashes from schedule violations across 102 experiments.
-
-```python
-assert schedule(0) == WARMUP_RATIO and schedule(1) == WARMDOWN_RATIO
-```
-
-### 3. **VRAM Monitoring** (`train.py:504-506`)
-**Problem:** Silent memory pressure can degrade performance or cause OOM crashes.  
-**Solution:** Warn when approaching memory limits (>90% usage).  
-**Impact:** All 102 experiments stayed within 8GB bounds, no OOM failures.
-
-```python
-if torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated() > 0.9:
-    print(f"⚠️  VRAM WARNING: {mem_gb:.1f} GB / 8 GB")
-```
-
-### 4. **Script Hash Tracking** (`train.py:650-652`)
-**Problem:** Accidentally editing `train.py` during experiment invalidates results.  
-**Solution:** Log SHA-256 hash of script at experiment start.  
-**Impact:** Easy detection of mid-run modifications.
-
-```python
-script_hash = hashlib.sha256(open(__file__, "rb").read()).hexdigest()
-print(f"Script hash: {script_hash[:8]}")
-```
-
-### 5. **Dynamic TORCH_SEED** (`train.py:469`)
-**Problem:** Hardcoded seed causes accidental duplication across experiments.  
-**Solution:** Auto-increment seed from git commit hash.  
-**Impact:** Each experiment has unique seed, transparent in logs.
-
-```python
-commit_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
-TORCH_SEED = int(commit_hash[:8], 16) % 2**31
-```
-
-### 6. **Anti-Stagnation Rule** (`program.md`)
-**Problem:** Agent gets stuck micro-tuning hyperparameters in noise floor.  
-**Solution:** After 5 consecutive discards with <0.002 improvement, force structural changes.  
-**Impact:** Prevents hyperparameter dead-ends, encourages architectural exploration.
-
-**Forbidden:** LR tweaks, weight decay adjustments  
-**Required:** Activation functions, attention mechanisms, architecture changes
 
 ## Platform Adaptations
 
