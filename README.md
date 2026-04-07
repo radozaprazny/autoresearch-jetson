@@ -35,10 +35,10 @@ Code changes from upstream required for Jetson ARM64:
 - Removed Flash Attention 3 kernel import (`from kernels import get_kernel`)
 - Replaced with `F.scaled_dot_product_attention` (PyTorch native SDPA)
 - Disabled `torch.compile` (Triton not supported on ARM64)
-- Reduced model: DEPTH=3 (vs 8 on H100), ASPECT_RATIO=64
+- Reduced model: DEPTH=4 (vs 8 on H100), ASPECT_RATIO=60
 
 **`prepare.py`:**
-- `MAX_SEQ_LEN=2048` (same as upstream)
+- `MAX_SEQ_LEN=512` (reduced for Jetson 8GB)
 - Reduced `EVAL_TOKENS` to fit 8GB VRAM
 
 ## Branches
@@ -51,7 +51,7 @@ This fork maintains **two branches** to show incremental value:
 **What's different from upstream:**
 - Flash Attention → PyTorch SDPA
 - Disabled `torch.compile` (ARM64 lacks Triton)
-- Reduced model size (DEPTH=3)
+- Reduced model size (DEPTH=4, ASPECT_RATIO=60)
 
 **Status:** 13 keep experiments tracked in git history  
 **Note:** No `results.tsv` file committed (following upstream's `.gitignore`)
